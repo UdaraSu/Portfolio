@@ -276,3 +276,42 @@ document.querySelectorAll('.btn').forEach(button => {
         }, 600);
     });
 });
+
+// Projects "See More" functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const projectsGrid = document.querySelector('.projects-grid');
+    const seeMoreBtn = document.getElementById('see-more-btn');
+    const projectsActions = document.getElementById('projects-actions');
+    const hiddenProjects = document.querySelectorAll('.project-hidden');
+    
+    // Check if there are more than 6 projects
+    if (hiddenProjects.length > 0) {
+        projectsActions.style.display = 'block';
+        
+        seeMoreBtn.addEventListener('click', () => {
+            const isExpanded = projectsGrid.classList.contains('show-all');
+            
+            if (isExpanded) {
+                // Collapse - show only first 6
+                projectsGrid.classList.remove('show-all');
+                seeMoreBtn.innerHTML = '<span>See More Projects</span><i class="fas fa-chevron-down"></i>';
+                seeMoreBtn.classList.remove('expanded');
+                
+                // Smooth scroll to projects section
+                setTimeout(() => {
+                    projectsGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            } else {
+                // Expand - show all projects with staggered animation
+                projectsGrid.classList.add('show-all');
+                seeMoreBtn.innerHTML = '<span>Show Less</span><i class="fas fa-chevron-up"></i>';
+                seeMoreBtn.classList.add('expanded');
+                
+                // Add staggered animation delay to each hidden project
+                hiddenProjects.forEach((project, index) => {
+                    project.style.animationDelay = `${index * 0.1}s`;
+                });
+            }
+        });
+    }
+});

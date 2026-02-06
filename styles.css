@@ -870,8 +870,52 @@ section {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2.5rem;
+}
+
+.project-hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.projects-grid.show-all .project-hidden {
+    display: block;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.projects-actions {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.see-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2.5rem;
+    font-size: 1rem;
+}
+
+.see-more-btn i {
+    transition: var(--transition);
+}
+
+.see-more-btn.expanded i {
+    transform: rotate(180deg);
 }
 
 .project-card {
@@ -1308,7 +1352,8 @@ section {
     }
 
     .projects-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
     }
 
     .skills-grid {
@@ -1403,6 +1448,11 @@ section {
 
     .section-title {
         font-size: 1.75rem;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .skill-items {
