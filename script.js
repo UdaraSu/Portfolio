@@ -139,35 +139,87 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Initialize EmailJS
+(function() {
+    emailjs.init('S4tZKRYm4LA4sKQb_');
+})();
+
 // Contact form handling
 const contactForm = document.getElementById('contact-form');
+const submitButton = contactForm.querySelector('button[type="submit"]');
 
 contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
+    // Disable submit button to prevent multiple submissions
+    const originalButtonText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    
     // Get form values
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
+    const templateParams = {
+        from_name: document.getElementById('name').value,
+        from_email: document.getElementById('email').value,
         subject: document.getElementById('subject').value,
         message: document.getElementById('message').value
     };
     
-    // Here you would typically send the data to a server
-    // For now, we'll just show an alert
-    console.log('Form submitted:', formData);
-    
-    // Show success message
-    alert('Thank you for your message! I\'ll get back to you soon.');
-    
-    // Reset form
-    contactForm.reset();
-    
-    // In a real application, you would:
-    // 1. Send data to your backend/email service
-    // 2. Show a proper success/error message
-    // 3. Handle form validation more thoroughly
+    // Send email using EmailJS
+    emailjs.send('service_nkw0idc', 'template_b5tbwml', templateParams)
+        .then(() => {
+            // Show success message
+            showMessage('success', 'Thank you for your message! I\'ll get back to you soon.');
+            
+            // Reset form
+            contactForm.reset();
+            
+            // Re-enable submit button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+        })
+        .catch((error) => {
+            // Show error message
+            showMessage('error', 'Sorry, there was an error sending your message. Please try again or contact me directly at udaraireshan@gmail.com');
+            
+            // Re-enable submit button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+            
+            console.error('EmailJS Error:', error);
+        });
 });
+
+// Function to show success/error messages
+function showMessage(type, message) {
+    // Remove existing message if any
+    const existingMessage = document.querySelector('.form-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // Create message element
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `form-message form-message-${type}`;
+    messageDiv.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Insert message before the form
+    contactForm.parentNode.insertBefore(messageDiv, contactForm);
+    
+    // Scroll to message
+    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    // Remove message after 5 seconds
+    setTimeout(() => {
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 300);
+    }, 5000);
+}
 
 // Add scroll reveal animation
 function revealOnScroll() {
